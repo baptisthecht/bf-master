@@ -1,0 +1,39 @@
+version: "3"
+services:
+    bf-db:
+        image: postgres
+        container_name: bf-db
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: B4PT1ST
+        ports:
+            - "5432:5432"
+        volumes:
+            - pg-data:/var/lib/pg
+
+    bf-back:
+        build:
+            context: /api
+            dockerfile: Dockerfile
+        container_name: bf-back
+        ports:
+            - "3000:3000"
+        depends_on:
+            - bf-db
+        volumes:
+            - ./api/src:/app/src
+
+    pgadmin:
+        image: dpage/pgadmin4
+        restart: always
+        container_name: bf-pgadmin4
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+            - PGADMIN_DEFAULT_PASSWORD=pgadmin4
+        ports:
+            - "5050:80"
+        depends_on:
+            - bf-db
+
+volumes:
+    pg-data:
